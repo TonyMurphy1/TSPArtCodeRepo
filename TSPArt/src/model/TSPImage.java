@@ -1,0 +1,254 @@
+package model;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
+public class TSPImage {//TODO add javadoc and comments throughout class
+	private BufferedImage originalImage;
+	private BufferedImage greyscaleImage;
+	private int[] grid;
+	private int maxCitiesInCell;
+	private int minCitiesInCell;
+	public double[][] cellGreyscaleAverage;
+	public int[][] noOfCitiesInCells;
+	private CityDistributor cityDistributor;
+	private City[] cities;
+	private BufferedImage cityMapImage;
+	private TSPSolver solver;
+	private int[][] TSPpath;
+	private BufferedImage TSPImage;
+	
+	public TSPImage() {
+		grid = new int[2];
+		maxCitiesInCell = -1;
+		minCitiesInCell = 1;
+	}
+	
+	//TODO reset variables as they are added to image
+	/**Load an image from file and set it as the original image. Reset other variables.
+	 * 
+	 * @param pathName - the address of the image to be loaded.
+	 * @return an integer, 0 if the load was successful, 1 otherwise.
+	 */
+	public int loadImage(String pathName) {
+		try {
+			originalImage = ImageIO.read(new File(pathName));
+			greyscaleImage = null;
+			grid = new int[2];
+			maxCitiesInCell = -1;
+			cellGreyscaleAverage = null;
+			noOfCitiesInCells = null;
+			cityDistributor = null;
+			cities = null;
+			return 0;
+		} catch (IOException e) {
+			return 1;
+		}
+	}
+	
+	/**Create a greyscale version of an input BufferedImage.
+	 * 
+	 * @param image - the BufferedImage to be converted to greyscale.
+	 * @return a greyscale version of the input BufferedImage, or null if the input was null.
+	 */
+	public BufferedImage createGreyScaleImage(BufferedImage image) {
+		if (image == null) return null;
+		BufferedImage convertedImage = new BufferedImage(image.getColorModel(), image.copyData(null), image.isAlphaPremultiplied(), null);
+		for (int widthIndex = 0; widthIndex < convertedImage.getWidth(); widthIndex++) {
+			for (int heightIndex = 0; heightIndex < convertedImage.getHeight(); heightIndex++) {
+				int pixelRGB = convertedImage.getRGB(widthIndex, heightIndex);
+				int pixelRed = (pixelRGB >> 16) & 0xFF;
+				int pixelGreen = (pixelRGB >> 8) & 0xFF;
+				int pixelBlue = pixelRGB & 0xFF;
+				int newRGB = (pixelRed + pixelGreen + pixelBlue)/3;
+				newRGB = ((newRGB << 16) + (newRGB << 8) + newRGB);
+				convertedImage.setRGB(widthIndex, heightIndex, newRGB);
+			}
+		}
+		return convertedImage;
+	}
+	
+	/**Convert originalImage in this instance into a greyscale equivalent and store it in greyscaleImage in this instance.
+	 * 
+	 * @return an integer, 0 if conversion was successful, 1 if originalImage is null and conversion cannot be applied.
+	 */
+	public int convertOriginalImageToGreyscale() {
+		greyscaleImage = createGreyScaleImage(originalImage);
+		if (greyscaleImage == null) return 1;
+		else return 0;
+	}
+	
+	/**Set the number of horizontal and vertical cells to be used in the grid that will be used to create stippled images.
+	 * 
+	 * @param horizontalCells
+	 * @param verticalCells
+	 */
+	public void setGrid(int horizontalCells, int verticalCells) {
+		grid[0] = horizontalCells;
+		grid[1] = verticalCells;
+		cellGreyscaleAverage = new double[horizontalCells][verticalCells];
+		noOfCitiesInCells = new int[horizontalCells][verticalCells];
+	}
+	
+	/**
+	 * 
+	 * @param noOfCities
+	 */
+	public int setMaxCitiesInCell(int noOfCities) {
+		if (noOfCities >= minCitiesInCell) {
+			maxCitiesInCell = noOfCities;
+			return 0;
+		} else {
+			return 1;
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int calculateAllCellsAverageGreyscaleValues() {
+		if (grid == null) return 1;
+		if (greyscaleImage == null) return 2;
+		for (int horizontalCellIndex = 0; horizontalCellIndex < grid[0]; horizontalCellIndex++) {
+			for (int verticalCellIndex = 0; verticalCellIndex < grid[1]; verticalCellIndex++) {
+				int cellWidth = greyscaleImage.getWidth()/grid[0];
+				int cellHeight = greyscaleImage.getHeight()/grid[1];
+				if (horizontalCellIndex == grid[0]-1) cellWidth += greyscaleImage.getWidth() % grid[0];
+				if (verticalCellIndex == grid[1]-1) cellHeight += greyscaleImage.getHeight() % grid[1];
+				cellGreyscaleAverage[horizontalCellIndex][verticalCellIndex] = calculateCellAverageGreyscaleValue(horizontalCellIndex, verticalCellIndex, cellWidth, cellHeight);
+			}
+		}
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * @param horizontalCellIndex
+	 * @param verticalCellIndex
+	 * @param cellWidth
+	 * @param cellHeight
+	 * @return
+	 */
+	private double calculateCellAverageGreyscaleValue(int horizontalCellIndex, int verticalCellIndex, int cellWidth, int cellHeight) {
+		int noOfPixels = 0;
+		double totalSum = 0;
+		for (int horizontalPixelIndex = 0; horizontalPixelIndex < cellWidth; horizontalPixelIndex++) {
+			for (int verticalPixelIndex = 0; verticalPixelIndex < cellHeight; verticalPixelIndex++) {
+				noOfPixels++;
+				totalSum += (1.0 / 255) * (double) (greyscaleImage.getRGB((greyscaleImage.getWidth()/grid[0] * horizontalCellIndex) + horizontalPixelIndex, (greyscaleImage.getHeight()/grid[1] * verticalCellIndex) + verticalPixelIndex) & 0xFF);
+			}
+		}
+		return (totalSum / noOfPixels);
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int calculateNumberOfCitiesInAllCells() {
+		if (cellGreyscaleAverage == null) return 1;
+		if (maxCitiesInCell < minCitiesInCell) return 2;
+		if (grid == null) return 3;
+		for (int horizontalCellIndex = 0; horizontalCellIndex < grid[0]; horizontalCellIndex++) {
+			for (int verticalCellIndex = 0; verticalCellIndex < grid[0]; verticalCellIndex++) {
+				//TODO possible bug, can be -1?
+				noOfCitiesInCells[horizontalCellIndex][verticalCellIndex] = (int) Math.floor(maxCitiesInCell - ((maxCitiesInCell + 1) * cellGreyscaleAverage[horizontalCellIndex][verticalCellIndex]));
+			}
+		}
+		return 0;
+	}
+	
+	/**
+	 * 
+	 * @param cityDistributorType
+	 */
+	public void pickCityDistributor(int cityDistributorType) {
+		if (cityDistributorType == 0) {
+			cityDistributor = new RandomCityDistributor(grid, noOfCitiesInCells, greyscaleImage.getWidth(), greyscaleImage.getHeight());
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void distributeCities() {
+		cities = cityDistributor.distributeCities();
+		cityMapImage = new BufferedImage(greyscaleImage.getWidth(), greyscaleImage.getHeight(), greyscaleImage.getType());
+		Graphics2D imageGraphics = cityMapImage.createGraphics();
+		imageGraphics.setBackground(Color.WHITE);
+		imageGraphics.clearRect(0, 0, cityMapImage.getWidth(), cityMapImage.getHeight());
+		imageGraphics.setColor(Color.BLACK);
+		for (int citiesDrawnIndex = 0; citiesDrawnIndex < cities.length; citiesDrawnIndex++) {
+			imageGraphics.fillArc(cities[citiesDrawnIndex].getXPos()-1, cities[citiesDrawnIndex].getYPos()-1, 2, 2, 0, 360);
+		}
+	}
+	
+	public void pickTSPSolver(int TSPSolverType) {
+		if (TSPSolverType == 0) {
+			solver = new NNSolver();
+		}
+	}
+	
+	public void solveInstanceOfTSP() {
+		TSPpath = solver.solve(cities);
+		TSPImage = new BufferedImage(greyscaleImage.getWidth(), greyscaleImage.getHeight(), greyscaleImage.getType());
+		Graphics2D imageGraphics = TSPImage.createGraphics();
+		imageGraphics.setBackground(Color.WHITE);
+		imageGraphics.clearRect(0, 0, TSPImage.getWidth(), TSPImage.getHeight());
+		imageGraphics.setColor(Color.BLACK);
+		for (int citiesDrawnIndex = 0; citiesDrawnIndex < TSPpath.length; citiesDrawnIndex++) {
+			imageGraphics.drawLine(TSPpath[citiesDrawnIndex][0], TSPpath[citiesDrawnIndex][1], TSPpath[citiesDrawnIndex][2], TSPpath[citiesDrawnIndex][3]);
+		}
+		for (int i = 0; i < TSPpath.length; i++) {
+			for (int i2 = i+1; i2 < TSPpath.length; i2++) {
+				if (TSPpath[i][0] == TSPpath[i2][0] && TSPpath[i][1] == TSPpath[i2][1]) {
+					System.out.println("first path bug");
+				}
+				if (TSPpath[i][2] == TSPpath[i2][2] && TSPpath[i][3] == TSPpath[i2][3]) {
+					System.out.println("second path bug");
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BufferedImage getOriginalImage() {
+		return originalImage;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BufferedImage getGreyScaleImage() {
+		return greyscaleImage;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BufferedImage getCityMapImage() {
+		return cityMapImage;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BufferedImage getTSPImage() {
+		return TSPImage;
+	}
+}
