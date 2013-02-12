@@ -1,12 +1,14 @@
 package model;
 
+import java.awt.image.BufferedImage;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class Tester {
-
+	
 	public static void main(String[] args) {
 		JFrame originalFrame = new JFrame("Original Image");
 		originalFrame.setSize(1000, 1000);
@@ -28,7 +30,7 @@ public class Tester {
 		greyFrame.setVisible(true);
 		
 		image.setGrid(50, 50);
-		image.setMaxCitiesInCell(20);
+		image.setMaxCitiesInCell(5);
 		image.calculateAllCellsAverageGreyscaleValues();
 		image.calculateNumberOfCitiesInAllCells();
 		image.pickCityDistributor(0);

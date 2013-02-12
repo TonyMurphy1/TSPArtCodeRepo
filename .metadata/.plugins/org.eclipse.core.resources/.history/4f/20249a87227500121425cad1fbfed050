@@ -1,0 +1,32 @@
+package view;
+
+import java.awt.BorderLayout;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class MainFrame extends JFrame {
+
+	public MainFrame() {
+		JPanel mainPanel = new JPanel();
+		add(mainPanel);
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		JButton loadImageButton = new JButton("Load Image");
+		buttonPanel.add(Box.createHorizontalGlue());
+		buttonPanel.add(loadImageButton);
+		JButton viewOriginalImageButton = new JButton("View original image");
+		buttonPanel.add(viewOriginalImageButton);
+		
+		mainPanel.add(buttonPanel, BorderLayout.LINE_START);
+		setVisible(true);
+	}
+	
+	public static void main(String[] args) {
+		new MainFrame();
+	}
+}

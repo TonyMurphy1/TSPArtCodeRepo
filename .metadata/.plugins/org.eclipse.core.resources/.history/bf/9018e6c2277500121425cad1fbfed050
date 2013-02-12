@@ -1,0 +1,49 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class MainFrame extends JFrame {
+
+	public MainFrame() {
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.LINE_AXIS));
+		add(mainPanel);
+		mainPanel.add(createButtonPanel());
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setVisible(true);
+	}
+	
+	public JPanel createButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		JButton loadImageButton = new JButton("Load Image");
+		buttonPanel.add(loadImageButton);
+		JButton viewOriginalImageButton = new JButton("View Original Image");
+		buttonPanel.add(viewOriginalImageButton);
+		JButton convertImageToGreyScaleButton = new JButton("Greyscale Conversion");
+		buttonPanel.add(convertImageToGreyScaleButton);
+		JButton viewGreyScaleImageButton = new JButton("View Greyscale Image");
+		buttonPanel.add(viewGreyScaleImageButton);
+		JButton stippleImageButon = new JButton("Stipple Image");
+		buttonPanel.add(stippleImageButon);
+		JButton viewStippledImage = new JButton("View Stippled Image");
+		buttonPanel.add(viewStippledImage);
+		JButton solveTSPInstanceButton = new JButton("Solve As TSP Instance");
+		buttonPanel.add(solveTSPInstanceButton);
+		JButton viewTSPImageButton = new JButton("View TSP Art Image");
+		buttonPanel.add(viewTSPImageButton);
+		buttonPanel.add(Box.createVerticalGlue());
+		return buttonPanel;
+	}
+	
+	public static void main(String[] args) {
+		new MainFrame();
+	}
+}

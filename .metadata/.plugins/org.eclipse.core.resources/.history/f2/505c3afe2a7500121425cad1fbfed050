@@ -1,0 +1,65 @@
+package view;
+
+import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class MainFrame extends JFrame {
+
+	private ImageIcon displayedImage;
+	
+	public MainFrame() {
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.LINE_AXIS));
+		add(mainPanel);
+		mainPanel.add(createButtonPanel());
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setVisible(true);
+	}
+	
+	public JPanel createButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		Dimension buttonSize = new Dimension(100, 25);
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		JButton loadImageButton = new JButton("Load Image");
+		loadImageButton.setSize(buttonSize);
+		buttonPanel.add(loadImageButton);
+		JButton viewOriginalImageButton = new JButton("View Original Image");
+		viewOriginalImageButton.setSize(buttonSize);
+		buttonPanel.add(viewOriginalImageButton);
+		JButton convertImageToGreyScaleButton = new JButton("Greyscale Conversion");
+		convertImageToGreyScaleButton.setSize(buttonSize);
+		buttonPanel.add(convertImageToGreyScaleButton);
+		JButton viewGreyScaleImageButton = new JButton("View Greyscale Image");
+		viewGreyScaleImageButton.setSize(buttonSize);
+		buttonPanel.add(viewGreyScaleImageButton);
+		JButton stippleImageButon = new JButton("Stipple Image");
+		stippleImageButon.setSize(buttonSize);
+		buttonPanel.add(stippleImageButon);
+		JButton viewStippledImage = new JButton("View Stippled Image");
+		viewStippledImage.setSize(buttonSize);
+		buttonPanel.add(viewStippledImage);
+		JButton solveTSPInstanceButton = new JButton("Solve As TSP Instance");
+		solveTSPInstanceButton.setSize(buttonSize);
+		buttonPanel.add(solveTSPInstanceButton);
+		JButton viewTSPImageButton = new JButton("View TSP Art Image");
+		viewTSPImageButton.setSize(buttonSize);
+		buttonPanel.add(viewTSPImageButton);
+		buttonPanel.add(Box.createVerticalGlue());
+		return buttonPanel;
+	}
+	
+	public void setImage(BufferedImage image) {
+		displayedImage.setImage(image);
+	}
+	
+	public static void main(String[] args) {
+		new MainFrame();
+	}
+}
