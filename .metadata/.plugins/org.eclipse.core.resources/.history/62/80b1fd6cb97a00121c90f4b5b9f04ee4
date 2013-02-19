@@ -1,0 +1,54 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class TSPArtInputFrame extends JFrame {
+	private JComboBox TSPSolvingAlgorithm;
+	private JButton okButton;
+	private JButton cancelButton;
+	
+	public TSPArtInputFrame(ActionListener controller) {
+		setTitle("TSP Solving Options");
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		JPanel componentPanel = new JPanel();
+		mainPanel.add(componentPanel, BorderLayout.CENTER);
+		add(mainPanel);
+		
+		String[] TSPSolvingAlgorithms = {"Nearest Neighbour"};
+		TSPSolvingAlgorithm = new JComboBox(TSPSolvingAlgorithms);
+		componentPanel.add(TSPSolvingAlgorithm);
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+		mainPanel.add(buttonPanel, BorderLayout.PAGE_END);
+		
+		okButton = new JButton("OK");
+		okButton.setActionCommand("TSP solve ok");
+		okButton.addActionListener(controller);
+		buttonPanel.add(okButton);
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("TSP solve cancel");
+		cancelButton.addActionListener(controller);
+		buttonPanel.add(cancelButton);
+		
+		setVisible(true);
+		
+		//TODO fix size
+		setSize(500, 100);
+		setAlwaysOnTop(true);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+	}
+	
+	public int getIndexOfSelectedAlgorithm() {
+		return TSPSolvingAlgorithm.getSelectedIndex();
+	}
+}

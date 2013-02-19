@@ -1,0 +1,182 @@
+package view;
+
+import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import controller.TSPArtController;
+
+public class MainFrame extends JFrame {
+
+	private JPanel mainPanel;
+	private ImageIcon displayedImage;
+	private Image noImageLoaded;
+	
+	private JButton loadImageButton;
+	private JButton viewOriginalImageButton;
+	private JButton greyscaleConversionButton;
+	private JButton viewGreyscaleImageButton;
+	private JButton stippleImageButton;
+	private JButton viewStippledImageButton;
+	private JButton solveAsTSPInstanceButton;
+	private JButton viewTSPArtButton;
+	
+	public MainFrame() {
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.LINE_AXIS));
+		add(mainPanel);
+		mainPanel.add(createButtonPanel());
+		JPanel imagePanel= new JPanel();
+		imagePanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		try {
+			noImageLoaded = ImageIO.read(new File("NoImageLoaded.png"));
+		} catch (IOException e) {}
+		displayedImage = new ImageIcon(noImageLoaded);
+		JLabel imageLabel = new JLabel(displayedImage);
+		imageLabel.setBorder(BorderFactory.createLoweredBevelBorder());
+		imagePanel.add(imageLabel);
+		mainPanel.add(imagePanel);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		mainPanel.setPreferredSize(new Dimension(600, 300));
+		this.pack();
+		setVisible(true);
+	}
+	
+	public JPanel createButtonPanel() {
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		Dimension buttonSize = new Dimension(200, 25);
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		loadImageButton = createFixedSizeButton("Load Image", buttonSize, "Load an image");
+		buttonPanel.add(loadImageButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		viewOriginalImageButton = createFixedSizeButton("View Original Image", buttonSize, "");
+		viewOriginalImageButton.setEnabled(false);
+		buttonPanel.add(viewOriginalImageButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		greyscaleConversionButton = createFixedSizeButton("Greyscale Conversion", buttonSize, "");
+		greyscaleConversionButton.setEnabled(false);
+		buttonPanel.add(greyscaleConversionButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		viewGreyscaleImageButton = createFixedSizeButton("View Greyscale Image", buttonSize, "");
+		viewGreyscaleImageButton.setEnabled(false);
+		buttonPanel.add(viewGreyscaleImageButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		stippleImageButton = createFixedSizeButton("Stipple Image", buttonSize, "");
+		stippleImageButton.setEnabled(false);
+		buttonPanel.add(stippleImageButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		viewStippledImageButton = createFixedSizeButton("View Stippled Image", buttonSize, "");
+		viewStippledImageButton.setEnabled(false);
+		buttonPanel.add(viewStippledImageButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		solveAsTSPInstanceButton = createFixedSizeButton("Solve As TSP Instance", buttonSize, "");
+		solveAsTSPInstanceButton.setEnabled(false);
+		buttonPanel.add(solveAsTSPInstanceButton);
+		buttonPanel.add(Box.createRigidArea(new Dimension(0, 2)));
+		viewTSPArtButton = createFixedSizeButton("View TSP Art Image", buttonSize, "");
+		viewTSPArtButton.setEnabled(false);
+		buttonPanel.add(viewTSPArtButton);
+		buttonPanel.add(Box.createVerticalGlue());
+		return buttonPanel;
+	}
+	
+	private JButton createFixedSizeButton(String label, Dimension size, String tooltip) {
+		JButton fixedSizeButton = new JButton(label);
+		fixedSizeButton.setToolTipText(tooltip);
+		fixedSizeButton.setPreferredSize(size);
+		fixedSizeButton.setMinimumSize(size);
+		fixedSizeButton.setMaximumSize(size);
+		fixedSizeButton.setActionCommand(label);
+		return fixedSizeButton;
+	}
+	
+	public void setListener(TSPArtController controller) {
+		loadImageButton.addActionListener(controller);
+		viewOriginalImageButton.addActionListener(controller);
+		greyscaleConversionButton.addActionListener(controller);
+		viewGreyscaleImageButton.addActionListener(controller);
+		stippleImageButton.addActionListener(controller);
+		viewStippledImageButton.addActionListener(controller);
+		solveAsTSPInstanceButton.addActionListener(controller);
+		viewTSPArtButton.addActionListener(controller);
+		addComponentListener(controller);
+	}
+	
+	public File showLoadFileWindow() {
+		JFileChooser fileLoader = new JFileChooser();
+		if (fileLoader.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			return fileLoader.getSelectedFile();
+		} else return null;
+	}
+	
+	public void setImage(Image image) {
+		displayedImage.setImage(image);
+		repaint();
+	}
+	
+	public Image getNoImageLoadedImage() {
+		return noImageLoaded;
+	}
+	
+	public void loadImageClicked() {
+		viewOriginalImageButton.setEnabled(true);
+		greyscaleConversionButton.setEnabled(true);
+		viewGreyscaleImageButton.setEnabled(false);
+		stippleImageButton.setEnabled(false);
+		viewStippledImageButton.setEnabled(false);
+		solveAsTSPInstanceButton.setEnabled(false);
+		viewTSPArtButton.setEnabled(false);
+	}
+	
+	public void greyscaleConversionClicked() {
+		viewOriginalImageButton.setEnabled(true);
+		greyscaleConversionButton.setEnabled(true);
+		viewGreyscaleImageButton.setEnabled(true);
+		stippleImageButton.setEnabled(true);
+		viewStippledImageButton.setEnabled(false);
+		solveAsTSPInstanceButton.setEnabled(false);
+		viewTSPArtButton.setEnabled(false);
+	}
+	
+	public void stippleImageClicked() {
+		viewOriginalImageButton.setEnabled(true);
+		greyscaleConversionButton.setEnabled(true);
+		viewGreyscaleImageButton.setEnabled(true);
+		stippleImageButton.setEnabled(true);
+		viewStippledImageButton.setEnabled(true);
+		solveAsTSPInstanceButton.setEnabled(true);
+		viewTSPArtButton.setEnabled(false);
+	}
+	
+	public void solveTSPInstanceClicked() {
+		viewOriginalImageButton.setEnabled(true);
+		greyscaleConversionButton.setEnabled(true);
+		viewGreyscaleImageButton.setEnabled(true);
+		stippleImageButton.setEnabled(true);
+		viewStippledImageButton.setEnabled(true);
+		solveAsTSPInstanceButton.setEnabled(true);
+		viewTSPArtButton.setEnabled(true);
+	}
+	
+	public int getImageWidth() {
+		return mainPanel.getWidth()-208;
+	}
+	
+	public int getImageHeight() {
+		return mainPanel.getHeight()-4;
+	}
+}

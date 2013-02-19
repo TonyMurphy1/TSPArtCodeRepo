@@ -1,0 +1,61 @@
+package view;
+
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+
+public class StippledImageInputFrame extends JFrame {
+	
+	private JSpinner horizontalCells;
+	private JSpinner verticalCells;
+	private JSpinner maxNoOfCitiesPerCell;
+	private JComboBox stipplingAlgorithm;
+	private JButton okButton;
+	private JButton cancelButton;
+	
+	public StippledImageInputFrame(int maxHorizontalCells, int maxVerticalCells, int maxCitiesPerCell, ActionListener controller) {
+		this.setTitle("Image Stippling Options");
+		JPanel mainPanel = new JPanel();
+		add(mainPanel);
+		
+		horizontalCells = new JSpinner(new SpinnerNumberModel(1, 1, maxHorizontalCells, 1));
+		mainPanel.add(horizontalCells);
+		verticalCells = new JSpinner(new SpinnerNumberModel(1, 1, maxVerticalCells, 1));
+		mainPanel.add(verticalCells);
+		maxNoOfCitiesPerCell = new JSpinner(new SpinnerNumberModel(1, 1, maxCitiesPerCell, 1));
+		mainPanel.add(maxNoOfCitiesPerCell);
+		
+		String[] stipplingAlgorithms = {"Random"};
+		stipplingAlgorithm = new JComboBox(stipplingAlgorithms);
+		mainPanel.add(stipplingAlgorithm);
+		
+		okButton = new JButton("OK");
+		okButton.setActionCommand("Stipple ok");
+		okButton.addActionListener(controller);
+		mainPanel.add(okButton);
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("Stipple cancel");
+		cancelButton.addActionListener(controller);
+		mainPanel.add(cancelButton);
+		
+		setVisible(true);
+		
+		//TODO fix size
+		setSize(500, 100);
+	}
+	
+	public int[] getGridSize() {
+		int[] gridSize = {horizontalCells.getValue()pack(), verticalCells.getValue()};
+		return gridSize;
+	}
+	
+	public int getMaxCities() {
+		
+	}
+}

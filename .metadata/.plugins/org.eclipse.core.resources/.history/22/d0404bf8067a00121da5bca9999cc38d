@@ -1,0 +1,111 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
+
+public class StippledImageInputFrame extends JFrame {
+	
+	//TODO add layout
+	//TODO fix bug closing window at top right
+	private JSpinner horizontalCells;
+	private JSpinner verticalCells;
+	private JSpinner maxNoOfCitiesPerCell;
+	private JComboBox stipplingAlgorithm;
+	private JButton okButton;
+	private JButton cancelButton;
+	
+	public StippledImageInputFrame(int maxHorizontalCells, int maxVerticalCells, int maxCitiesPerCell, ActionListener controller) {
+		this.setTitle("Image Stippling Options");
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new GridLayout(0,2));
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		add(mainPanel);
+		Dimension componentSize = new Dimension(200, 25);
+		
+		JLabel horizontalCellsLabel = new JLabel("No. of horizontal cells:");
+		horizontalCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		horizontalCellsLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(horizontalCellsLabel);
+		horizontalCells = new JSpinner(new SpinnerNumberModel(1, 1, maxHorizontalCells, 1));
+		horizontalCells.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(horizontalCells);
+		
+		JLabel verticalCellsLabel = new JLabel("No. of vertical cells:");
+		verticalCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		verticalCellsLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(verticalCellsLabel);
+		verticalCells = new JSpinner(new SpinnerNumberModel(1, 1, maxVerticalCells, 1));
+		verticalCells.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(verticalCells);
+		
+		JLabel maxCitiesLabel = new JLabel("Max cities per cell:");
+		maxCitiesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		maxCitiesLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(maxCitiesLabel);
+		maxNoOfCitiesPerCell = new JSpinner(new SpinnerNumberModel(1, 1, maxCitiesPerCell, 1));
+		maxNoOfCitiesPerCell.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(maxNoOfCitiesPerCell);
+		
+		JLabel stipplingAlgorithmLabel = new JLabel("Stippling Algorithm:");
+		stipplingAlgorithmLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		stipplingAlgorithmLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(stipplingAlgorithmLabel);
+		String[] stipplingAlgorithms = {"Random"};
+		stipplingAlgorithm = new JComboBox(stipplingAlgorithms);
+		stipplingAlgorithm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		mainPanel.add(stipplingAlgorithm);
+		
+		mainPanel.add(Box.createRigidArea(new Dimension()));
+		
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		
+		okButton = new JButton("OK");
+		okButton.setActionCommand("Stipple ok");
+		okButton.addActionListener(controller);
+		buttonPanel.add(okButton);
+		
+		buttonPanel.add(Box.createRigidArea(new Dimension(2, 2)));
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("Stipple cancel");
+		cancelButton.addActionListener(controller);
+		buttonPanel.add(cancelButton);
+		
+		JPanel panelForTheButtonpanel = new JPanel();
+		panelForTheButtonpanel.add(buttonPanel, BorderLayout.LINE_END);
+		
+		mainPanel.add(panelForTheButtonpanel);
+		
+		setVisible(true);
+		
+		//TODO fix size
+		setSize(500, 100);
+	}
+	
+	public int[] getGridSize() {
+		int[] gridSize = {Integer.parseInt(horizontalCells.getValue().toString()), Integer.parseInt(verticalCells.getValue().toString())};
+		return gridSize;
+	}
+	
+	public int getMaxCities() {
+		return Integer.parseInt(maxNoOfCitiesPerCell.getValue().toString());
+	}
+	
+	public int getIndexOfSelectedAlgorithm() {
+		return stipplingAlgorithm.getSelectedIndex();
+	}
+}

@@ -4,7 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -36,10 +39,14 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 	/**Load an image from file and set it as the original image. Reset other variables.
 	 * 
 	 * @param pathName - the address of the image to be loaded.
-	 * @return an integer, 0 if the load was successful, 1 otherwise.
+	 * @return an integer, 0 if the load was successful, 1 if IOException occurs, 2 if file is not compatible
 	 */
 	public int loadImage(String pathName) {
-		try {
+		try {//TODO add additional compatible file extensions
+			if (!pathName.endsWith(".jpg") && !pathName.endsWith(".jpeg") && !pathName.endsWith(".png")) {
+				System.out.println(pathName);
+				return 2;
+			}
 			originalImage = ImageIO.read(new File(pathName));
 			greyscaleImage = null;
 			grid = new int[2];

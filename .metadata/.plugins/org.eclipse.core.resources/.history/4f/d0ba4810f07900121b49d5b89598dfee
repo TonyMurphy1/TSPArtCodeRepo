@@ -1,0 +1,113 @@
+package controller;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.JFileChooser;
+
+import model.TSPImage;
+import view.MainFrame;
+import view.StippledImageInputFrame;
+import view.TSPArtInputFrame;
+
+public class TSPArtController implements ActionListener {
+
+	private MainFrame mainFrame;
+	private TSPImage tspimage;
+	private StippledImageInputFrame stippledImageOptionsFrame;
+	private TSPArtInputFrame tspImageoptionsFrame;
+	private short currentlyDisplayedImageMode;
+	
+	public TSPArtController (MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+		tspimage = new TSPImage();
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent aE) {
+		
+		//TODO make image scale properly
+		if (aE.getActionCommand().equals("Load Image")) {
+			File image = mainFrame.showLoadFileWindow();
+			if (!image.equals(null)) {
+				tspimage.loadImage(image.getPath());
+				currentlyDisplayedImageMode = 0;
+				mainFrame.loadImageClicked();
+			} else {
+				//TODO file not loaded
+			}
+		} else if (aE.getActionCommand().equals("View Original Image")) {
+			currentlyDisplayedImageMode = 0;
+		} else if (aE.getActionCommand().equals("Greyscale Conversion")) {
+			tspimage.convertOriginalImageToGreyscale();
+			currentlyDisplayedImageMode = 1;
+			mainFrame.greyscaleConversionClicked();
+		} else if (aE.getActionCommand().equals("View Greyscale Image")) {
+			currentlyDisplayedImageMode = 1;
+		} else if (aE.getActionCommand().equals("Stipple Image")) {
+			stippledImageOptionsFrame = new StippledImageInputFrame(200, 200, 10, this);
+			mainFrame.setEnabled(false);
+		} else if (aE.getActionCommand().equals("View Stippled Image")) {
+			currentlyDisplayedImageMode = 2;
+		} else if (aE.getActionCommand().equals("Solve As TSP Instance")) {
+			tspImageoptionsFrame = new TSPArtInputFrame(this);
+			mainFrame.setEnabled(false);
+		} else if (aE.getActionCommand().equals("View TSP Art Image")) {
+			currentlyDisplayedImageMode = 3;
+		} else if (aE.getActionCommand().equals("Stipple ok")) {
+			tspimage.setGrid(stippledImageOptionsFrame.getGridSize()[0], (stippledImageOptionsFrame.getGridSize()[1]));
+			tspimage.setMaxCitiesInCell(stippledImageOptionsFrame.getMaxCities());
+			tspimage.calculateAllCellsAverageGreyscaleValues();
+			tspimage.calculateNumberOfCitiesInAllCells();
+			tspimage.pickCityDistributor(0);
+			tspimage.distributeCities();
+			currentlyDisplayedImageMode = 2;
+			stippledImageOptionsFrame.setVisible(false);
+			mainFrame.setVisible(true);
+			mainFrame.setEnabled(true);
+		} else if (aE.getActionCommand().equals("Stipple cancel")) {
+			stippledImageOptionsFrame.setVisible(false);
+			mainFrame.setVisible(true);
+			mainFrame.setEnabled(true);
+		} else if (aE.getActionCommand().equals("TSP solve ok")) {
+			tspimage.pickTSPSolver(0);
+			tspimage.solveInstanceOfTSP();
+			currentlyDisplayedImageMode = 3;
+			tspImageoptionsFrame.setVisible(false);
+			mainFrame.setVisible(true);
+			mainFrame.setEnabled(true);
+		} else if (aE.getActionCommand().equals("TSP solve cancel")) {
+			
+		}
+		mainFrame.repaint();
+		System.out.println(mainFrame.getImageWidth());
+	}
+	
+	public MainFrame getMainFrame() {
+		return mainFrame;
+	}
+	
+	private void setImage() {
+		switch(currentlyDisplayedImageMode) {
+			case 0:
+				
+				break;
+			case 1:
+				
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				
+				break;
+		}
+	}
+
+	public static void main(String[] args) {
+		MainFrame mainFrame = new MainFrame();
+		TSPArtController controller = new TSPArtController(mainFrame);
+		mainFrame.setButtonsActionListener(controller);
+	}
+}

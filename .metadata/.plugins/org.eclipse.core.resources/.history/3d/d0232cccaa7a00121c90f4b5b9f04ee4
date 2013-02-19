@@ -1,0 +1,20 @@
+package view;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import controller.TSPArtController;
+
+public class ErrorFrame extends JFrame{
+	private JPanel messagePanel;
+	private JLabel messageLabel;
+	private JButton okButton;
+	private JPanel buttonPanel;
+	
+	public ErrorFrame(TSPArtController controller) {
+		this.setTitle("Error!");
+		JLabel 
+	}
+}

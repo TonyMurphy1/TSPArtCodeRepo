@@ -1,0 +1,39 @@
+package view;
+
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class TSPArtInputFrame extends JFrame{
+	private JComboBox TSPSolvingAlgorithm;
+	private JButton okButton;
+	private JButton cancelButton;
+	
+	public TSPArtInputFrame(int maxHorizontalCells, int maxVerticalCells, int maxCitiesPerCell, ActionListener controller) {
+		this.setTitle("Image Stippling Options");
+		JPanel mainPanel = new JPanel();
+		add(mainPanel);
+		
+		String[] TSPSolvingAlgorithms = {"Nearest Neighbour"};
+		TSPSolvingAlgorithm = new JComboBox(TSPSolvingAlgorithms);
+		mainPanel.add(TSPSolvingAlgorithm);
+		
+		okButton = new JButton("OK");
+		okButton.setActionCommand("TSP solve ok");
+		okButton.addActionListener(controller);
+		mainPanel.add(okButton);
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("TSP solve cancel");
+		cancelButton.addActionListener(controller);
+		mainPanel.add(cancelButton);
+		
+		setVisible(true);
+		
+		//TODO fix size
+		setSize(500, 100);
+	}
+}

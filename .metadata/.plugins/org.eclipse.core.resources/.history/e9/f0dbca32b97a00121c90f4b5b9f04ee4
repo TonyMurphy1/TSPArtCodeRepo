@@ -1,0 +1,50 @@
+package view;
+
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class TSPArtInputFrame extends JFrame {
+	private JComboBox TSPSolvingAlgorithm;
+	private JButton okButton;
+	private JButton cancelButton;
+	
+	public TSPArtInputFrame(ActionListener controller) {
+		setTitle("TSP Solving Options");
+		JPanel mainPanel = new JPanel();
+		JPanel componentPanel = new JPanel();
+		mainPanel.add(componentPanel);
+		add(mainPanel);
+		
+		String[] TSPSolvingAlgorithms = {"Nearest Neighbour"};
+		TSPSolvingAlgorithm = new JComboBox(TSPSolvingAlgorithms);
+		componentPanel.add(TSPSolvingAlgorithm);
+		
+		JPanel buttonPanel = new JPanel();
+		mainPanel.add(buttonPanel);
+		
+		okButton = new JButton("OK");
+		okButton.setActionCommand("TSP solve ok");
+		okButton.addActionListener(controller);
+		buttonPanel.add(okButton);
+		
+		cancelButton = new JButton("Cancel");
+		cancelButton.setActionCommand("TSP solve cancel");
+		cancelButton.addActionListener(controller);
+		buttonPanel.add(cancelButton);
+		
+		setVisible(true);
+		
+		//TODO fix size
+		setSize(500, 100);
+		setAlwaysOnTop(true);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+	}
+	
+	public int getIndexOfSelectedAlgorithm() {
+		return TSPSolvingAlgorithm.getSelectedIndex();
+	}
+}
