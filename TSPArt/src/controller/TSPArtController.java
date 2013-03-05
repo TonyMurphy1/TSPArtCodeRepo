@@ -8,6 +8,8 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import model.TSPImage;
 import view.ErrorFrame;
@@ -15,7 +17,7 @@ import view.MainFrame;
 import view.StippledImageInputFrame;
 import view.TSPArtInputFrame;
 
-public class TSPArtController implements ActionListener, ComponentListener {
+public class TSPArtController implements ActionListener, ComponentListener, ChangeListener {
 
 	private MainFrame mainFrame;
 	private TSPImage tspimage;
@@ -23,8 +25,8 @@ public class TSPArtController implements ActionListener, ComponentListener {
 	private TSPArtInputFrame tspImageoptionsFrame;
 	private ErrorFrame errorFrame;
 	private short currentlyDisplayedImageMode;
-	private int[] maxGridCells = {200, 200};
-	private int maxCitiesPerCell = 10;
+	private int[] maxGridCells = new int[2];
+	private int maxCitiesPerCell;
 	
 	public TSPArtController (MainFrame mainFrame) {
 		this.mainFrame = mainFrame;
@@ -41,6 +43,9 @@ public class TSPArtController implements ActionListener, ComponentListener {
 					if (tspimage.loadImage(image.getPath()) == 0) {
 						currentlyDisplayedImageMode = 0;
 						mainFrame.loadImageClicked();
+						maxGridCells[0] = tspimage.getImageSize()[0]/2;
+						maxGridCells[1] = tspimage.getImageSize()[1]/2;
+						maxCitiesPerCell = calculateMaxCities(maxGridCells[0], maxGridCells[1]);
 					} else {
 						errorFrame = new ErrorFrame(this, "Error: File not compatible, file not loaded!");
 						mainFrame.setEnabled(false);
@@ -157,4 +162,16 @@ public class TSPArtController implements ActionListener, ComponentListener {
 
 	@Override
 	public void componentShown(ComponentEvent arg0) {}
+
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		int[] gridSize = stippledImageOptionsFrame.getCurrentGridSize();
+		stippledImageOptionsFrame.setMaxCitiesLimit(calculateMaxCities(gridSize[0], gridSize[1]));
+	}
+	
+	private int calculateMaxCities(int noOfHorizontalGridCells, int noOfVerticalGridCells) {
+		int[] cellSize = {tspimage.getImageSize()[0]/noOfHorizontalGridCells, tspimage.getImageSize()[1]/noOfVerticalGridCells};
+		int maxCitiesInCells = (cellSize[0] * cellSize[1]) / 2;
+		return maxCitiesInCells;
+	}
 }

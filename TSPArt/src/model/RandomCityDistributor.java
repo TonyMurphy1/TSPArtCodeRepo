@@ -17,18 +17,22 @@ public class RandomCityDistributor implements CityDistributor{
 		picSize[1] = picHeight;
 	}
 	
-	//TODO bugged
+	//TODO may still be bugged, testing necessary
 	@Override
 	public City[] distributeCities() {
 		Random placementPicker = new Random();
 		City[] cityList = new City[calculateNumberOfCitiesOnGrid()];
+		double horizontalCellSize = ((double) picSize[0])/grid[0];
+		double verticalCellSize = ((double) picSize[1])/grid[1];
 		int numberOfCitiesAdded = 0;
 		for (int horizontalCellIndex = 0; horizontalCellIndex < grid[0]; horizontalCellIndex++) {
 			for (int verticalCellIndex = 0; verticalCellIndex < grid[1]; verticalCellIndex++) {
 				for (int noOfCitiesIndex = 0; noOfCitiesIndex < noOfCitiesInCells[horizontalCellIndex][verticalCellIndex]; noOfCitiesIndex++) {
 					boolean cityPlaced = false;
 					while (!cityPlaced) {
-						City randomlyPlacedCity = new City((int) ((double)(picSize[0] / grid[0])) * horizontalCellIndex + placementPicker.nextInt((picSize[0] / grid[0])), (int) ((double)(picSize[1] / grid[1])) * verticalCellIndex+ placementPicker.nextInt((picSize[1] / grid[1])));
+						int xPos = (int) (horizontalCellSize * horizontalCellIndex) + placementPicker.nextInt((int) horizontalCellSize + 1);
+						int yPos = (int) (verticalCellSize * verticalCellIndex) + placementPicker.nextInt((int) verticalCellSize + 1);
+						City randomlyPlacedCity = new City(xPos, yPos);
 						if (!isThereACityAtThisPosition(randomlyPlacedCity.getXPos(), randomlyPlacedCity.getYPos(), cityList)) {
 							cityList[numberOfCitiesAdded] = randomlyPlacedCity;
 							cityPlaced = true;

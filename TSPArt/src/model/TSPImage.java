@@ -35,11 +35,10 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 		minCitiesInCell = 1;
 	}
 	
-	//TODO reset variables as they are added to image
 	/**Load an image from file and set it as the original image. Reset other variables.
 	 * 
 	 * @param pathName - the address of the image to be loaded.
-	 * @return an integer, 0 if the load was successful, 1 if IOException occurs, 2 if file is not compatible
+	 * @return an integer, 0 if the load was successful, 1 if IOException occurs, 2 if file is not compatible, 3 if image is too small (image must be at least 2x2 pixels)
 	 */
 	public int loadImage(String pathName) {
 		try {//TODO add additional compatible file extensions
@@ -48,6 +47,10 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 				return 2;
 			}
 			originalImage = ImageIO.read(new File(pathName));
+			if(originalImage.getWidth() < 2 || originalImage.getHeight() < 2) {
+				originalImage = null;
+				return 3;
+			}
 			greyscaleImage = null;
 			grid = new int[2];
 			maxCitiesInCell = -1;
@@ -202,6 +205,10 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 	public void pickTSPSolver(int TSPSolverType) {
 		if (TSPSolverType == 0) {
 			solver = new NNSolver();
+		} else if(TSPSolverType == 1) {
+			solver = new kOptSolver(3, 50000);
+		} else if (TSPSolverType == 2) {
+			solver = new AntColonySolver();
 		}
 	}
 	
@@ -214,16 +221,6 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 		imageGraphics.setColor(Color.BLACK);
 		for (int citiesDrawnIndex = 0; citiesDrawnIndex < TSPpath.length; citiesDrawnIndex++) {
 			imageGraphics.drawLine(TSPpath[citiesDrawnIndex][0], TSPpath[citiesDrawnIndex][1], TSPpath[citiesDrawnIndex][2], TSPpath[citiesDrawnIndex][3]);
-		}
-		for (int i = 0; i < TSPpath.length; i++) {
-			for (int i2 = i+1; i2 < TSPpath.length; i2++) {
-				if (TSPpath[i][0] == TSPpath[i2][0] && TSPpath[i][1] == TSPpath[i2][1]) {
-					System.out.println("first path bug");
-				}
-				if (TSPpath[i][2] == TSPpath[i2][2] && TSPpath[i][3] == TSPpath[i2][3]) {
-					System.out.println("second path bug");
-				}
-			}
 		}
 	}
 	
@@ -257,5 +254,18 @@ public class TSPImage {//TODO add javadoc and comments throughout class
 	 */
 	public BufferedImage getTSPImage() {
 		return TSPImage;
+	}
+	
+	public int[][] getTSPPath() {
+		return TSPpath;
+	}
+	
+	public City[] getCities() {
+		return cities;
+	}
+	
+	public int[] getImageSize() {
+		int[] size = {originalImage.getWidth(), originalImage.getHeight()};
+		return size;
 	}
 }

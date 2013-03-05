@@ -35,7 +35,7 @@ public class TSPArtInputFrame extends JFrame {
 		tspAlgorithmLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		tspAlgorithmLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(tspAlgorithmLabel);
-		String[] TSPSolvingAlgorithms = {"Nearest Neighbour"};
+		String[] TSPSolvingAlgorithms = {"Nearest Neighbour", "3-Opt Heuristic"};
 		TSPSolvingAlgorithm = new JComboBox(TSPSolvingAlgorithms);
 		TSPSolvingAlgorithm.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(TSPSolvingAlgorithm);

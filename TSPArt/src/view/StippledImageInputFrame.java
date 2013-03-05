@@ -18,6 +18,8 @@ import javax.swing.JTextPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
+import controller.TSPArtController;
+
 public class StippledImageInputFrame extends JFrame {
 	
 	private JSpinner horizontalCells;
@@ -27,7 +29,7 @@ public class StippledImageInputFrame extends JFrame {
 	private JButton okButton;
 	private JButton cancelButton;
 	
-	public StippledImageInputFrame(int maxHorizontalCells, int maxVerticalCells, int maxCitiesPerCell, ActionListener controller) {
+	public StippledImageInputFrame(int maxHorizontalCells, int maxVerticalCells, int maxCitiesPerCell, TSPArtController controller) {
 		setTitle("Image Stippling Options");
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BorderLayout());
@@ -39,23 +41,25 @@ public class StippledImageInputFrame extends JFrame {
 		horizontalCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		horizontalCellsLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(horizontalCellsLabel);
-		horizontalCells = new JSpinner(new SpinnerNumberModel(50, 1, maxHorizontalCells, 1));
+		horizontalCells = new JSpinner(new SpinnerNumberModel(maxVerticalCells, 1, maxHorizontalCells, 1));
 		horizontalCells.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		horizontalCells.addChangeListener(controller);
 		componentPanel.add(horizontalCells);
 		
 		JLabel verticalCellsLabel = new JLabel("No. of vertical cells:");
 		verticalCellsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		verticalCellsLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(verticalCellsLabel);
-		verticalCells = new JSpinner(new SpinnerNumberModel(50, 1, maxVerticalCells, 1));
+		verticalCells = new JSpinner(new SpinnerNumberModel(maxVerticalCells, 1, maxVerticalCells, 1));
 		verticalCells.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		verticalCells.addChangeListener(controller);
 		componentPanel.add(verticalCells);
 		
 		JLabel maxCitiesLabel = new JLabel("Max cities per cell:");
 		maxCitiesLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		maxCitiesLabel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(maxCitiesLabel);
-		maxNoOfCitiesPerCell = new JSpinner(new SpinnerNumberModel(5, 1, maxCitiesPerCell, 1));
+		maxNoOfCitiesPerCell = new JSpinner(new SpinnerNumberModel(maxCitiesPerCell, 1, maxCitiesPerCell, 1));
 		maxNoOfCitiesPerCell.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		componentPanel.add(maxNoOfCitiesPerCell);
 		
@@ -118,5 +122,14 @@ public class StippledImageInputFrame extends JFrame {
 	
 	public int getIndexOfSelectedAlgorithm() {
 		return stipplingAlgorithm.getSelectedIndex();
+	}
+	
+	public int[] getCurrentGridSize() {
+		int[] size = {Integer.parseInt(horizontalCells.getValue().toString()), Integer.parseInt(verticalCells.getValue().toString())};
+		return size;
+	}
+	
+	public void setMaxCitiesLimit(int maxCitiesPerCell) {
+		if (maxCitiesPerCell > 0) maxNoOfCitiesPerCell.setModel(new SpinnerNumberModel(maxCitiesPerCell, 1, maxCitiesPerCell, 1));
 	}
 }
